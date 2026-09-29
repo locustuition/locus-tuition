@@ -240,7 +240,10 @@
     }
     .expect-head h3 em { font-style: italic; color: var(--gold); }
     .expect-head p { font-size: 0.9rem; color: rgba(240,245,243,0.65); line-height: 1.85; }
-    .expect-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.8rem; }
+    .expect-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.2rem; }
+    @media (max-width: 1100px) {
+      .expect-grid { grid-template-columns: repeat(2, 1fr); gap: 2.6rem; }
+    }
     .expect-item { border-top: 1px solid rgba(240,245,243,0.24); padding-top: 1.5rem; }
     .expect-num {
       font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 300;
@@ -391,6 +394,47 @@
         display: block; font-size: 0.62rem; letter-spacing: 0.18em;
         text-transform: uppercase; color: var(--teal); margin-bottom: 0.25rem;
       }
+    }
+
+    /* ── TIMETABLE ── */
+    #timetable {
+      background: var(--cream); border-top: 1px solid var(--border);
+      position: relative; overflow: hidden;
+    }
+    .tt-bar {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      gap: 1.5rem 2rem; flex-wrap: wrap; margin-bottom: 2.2rem;
+    }
+    .tt-bar .section-intro { margin-bottom: 0; }
+    .tt-toggle { display: flex; border: 1px solid var(--border-mid); flex-shrink: 0; }
+    .tt-toggle button {
+      background: none; border: none; font: inherit; cursor: pointer;
+      padding: 0.65rem 1.3rem; font-size: 0.66rem; font-weight: 500;
+      letter-spacing: 0.16em; text-transform: uppercase; color: var(--stone);
+      transition: background 0.25s, color 0.25s;
+    }
+    .tt-toggle button + button { border-left: 1px solid var(--border-mid); }
+    .tt-toggle button:hover { color: var(--teal); }
+    .tt-toggle button[aria-pressed="true"] { background: var(--teal); color: var(--cream); }
+    .tt-frame {
+      border: 1px solid var(--border-mid); background: #fff;
+      box-shadow: 3px 5px 18px rgba(22,33,58,0.06); overflow: hidden;
+    }
+    .tt-frame iframe { display: block; width: 100%; height: 680px; border: 0; }
+    .tt-empty { padding: 4.5rem 2.5rem; text-align: center; }
+    .tt-empty .tt-empty-mark {
+      font-family: 'Cormorant Garamond', serif; font-size: 2.6rem;
+      font-weight: 300; color: var(--teal); opacity: 0.4; line-height: 1; margin-bottom: 1rem;
+    }
+    .tt-empty h3 { font-size: 1.3rem; font-weight: 400; color: var(--navy); margin-bottom: 0.6rem; }
+    .tt-empty p { font-size: 0.86rem; color: var(--stone); line-height: 1.8; max-width: 440px; margin: 0 auto; }
+    .tt-note {
+      margin-top: 2.2rem; display: flex; gap: 2.5rem; flex-wrap: wrap; align-items: baseline;
+    }
+    .tt-note p { font-size: 0.82rem; color: var(--stone); line-height: 1.8; max-width: 620px; }
+    @media (max-width: 768px) {
+      .tt-frame iframe { height: 540px; }
+      .tt-toggle button { padding: 0.55rem 1rem; }
     }
 
     /* ── TESTIMONIALS ── */
@@ -587,11 +631,20 @@
       .expect-grid { grid-template-columns: 1fr; gap: 2.2rem; }
       .lantite { grid-template-columns: 1fr; }
       .lantite-side { border-left: none; border-top: 1px solid var(--border-mid); }
-      .nav-links { gap: 1.5rem; }
-    }
-    @media (max-width: 768px) {
       .nav-links { display: none; }
       .hamburger { display: flex; }
+      .nav-links.open {
+        display: flex; flex-direction: column; position: fixed;
+        top: 70px; left: 0; right: 0;
+        background: var(--cream); padding: 2rem 2.5rem;
+        border-bottom: 1px solid var(--border); gap: 1.5rem;
+      }
+    }
+    @media (max-width: 1060px) and (min-width: 901px) {
+      .nav-links { gap: 1.25rem; }
+      .nav-links a { font-size: 0.66rem; letter-spacing: 0.12em; }
+    }
+    @media (max-width: 768px) {
       .nav-links.open {
         display: flex; flex-direction: column; position: fixed;
         top: 70px; left: 0; right: 0;
@@ -723,6 +776,7 @@
         <li><a href="#programs">Programs</a></li>
         <li><a href="#samples">Samples</a></li>
         <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#timetable">Timetable</a></li>
         <li><a href="#testimonials">Reviews</a></li>
         <li><a href="#enrol">Enrol</a></li>
       </ul>
@@ -977,6 +1031,15 @@
               Groups are small on purpose, so I catch a misunderstanding as it happens
               rather than at the next exam - and practice is chosen for each student's
               gaps and upcoming assessments.
+            </p>
+          </div>
+          <div class="expect-item">
+            <span class="expect-num">04</span>
+            <h4>Deliberate design</h4>
+            <p>
+              Every course is designed from the foundations up - what a student lays
+              down in the first term is what the senior years stand on. Homework
+              routines start in lesson one and hold all year.
             </p>
           </div>
         </div>
@@ -1268,6 +1331,55 @@
 
 
 
+  <!-- ══════════════ TIMETABLE ══════════════ -->
+  <section id="timetable" class="section-pad">
+
+    <!-- Quiet mark: one circle with a radius, drawn off the left edge. -->
+    <svg class="locus-deco" style="bottom:-260px;left:-280px;width:600px;height:600px;"
+         viewBox="0 0 600 600" aria-hidden="true">
+      <circle cx="300" cy="300" r="280" fill="none" stroke="#16213A"
+              stroke-width="1" opacity="0.08" vector-effect="non-scaling-stroke"/>
+      <line x1="300" y1="300" x2="498" y2="102" stroke="#B8943C"
+            stroke-width="1" opacity="0.3" vector-effect="non-scaling-stroke"/>
+      <circle cx="300" cy="300" r="3.5" fill="#B8943C" opacity="0.45"/>
+    </svg>
+
+    <div class="max-w" style="position:relative;z-index:1;">
+      <p class="section-label reveal">Timetable</p>
+      <h2 class="section-heading reveal">Class times &amp; <em>availability</em></h2>
+
+      <div class="tt-bar reveal">
+        <p class="section-intro">
+          Current class blocks and the spots still open, straight from my calendar -
+          so what you see here is always up to date.
+        </p>
+        <div class="tt-toggle" role="group" aria-label="Calendar view">
+          <button type="button" data-mode="WEEK" aria-pressed="true">Week</button>
+          <button type="button" data-mode="AGENDA" aria-pressed="false">List</button>
+        </div>
+      </div>
+
+      <div class="tt-frame reveal" id="ttFrame">
+        <div class="tt-empty" id="ttEmpty">
+          <div class="tt-empty-mark">&#9675;</div>
+          <h3>Timetable coming shortly</h3>
+          <p>
+            The live class calendar is being set up. In the meantime, send an enquiry
+            and I'll let you know exactly what's running and where there's room.
+          </p>
+        </div>
+      </div>
+
+      <div class="tt-note reveal">
+        <p>
+          Class blocks run during NSW school terms. Private one-to-one sessions are
+          arranged individually and aren't shown here - ask and I'll find a time.
+        </p>
+        <a href="#enrol" class="btn-primary">Ask About a Spot</a>
+      </div>
+    </div>
+  </section>
+
   <!-- ══════════════ TESTIMONIALS ══════════════ -->
   <section id="testimonials" class="section-pad">
     <div class="max-w" style="position:relative;z-index:1;">
@@ -1496,27 +1608,33 @@
         </div>
 
         <div class="enrol-form reveal">
-          <h3>Enquiry Form</h3>
-          <p>We'll respond within 3 business days.</p>
+          <div id="formIntro">
+            <h3>Enquiry Form</h3>
+            <p>We'll respond within 3 business days.</p>
+          </div>
           <form id="enquiryForm" novalidate>
             <div class="form-row">
               <div class="form-group">
                 <label for="fParent">Parent / Guardian Name <span style="color:var(--stone);font-weight:300;text-transform:none;letter-spacing:0;">(or your own)</span></label>
-                <input id="fParent" name="Parent / Guardian" type="text" placeholder="Jane Smith" required />
+                <input id="fParent" name="Parent / Guardian" type="text" placeholder="Jane Smith"
+                       autocomplete="name" required />
               </div>
               <div class="form-group">
                 <label for="fStudent">Student Name</label>
-                <input id="fStudent" name="Student" type="text" placeholder="Emma Smith" required />
+                <input id="fStudent" name="Student" type="text" placeholder="Emma Smith"
+                       autocomplete="off" required />
               </div>
             </div>
             <div class="form-row">
               <div class="form-group">
                 <label for="fEmail">Email Address</label>
-                <input id="fEmail" name="Email" type="email" placeholder="jane@email.com" required />
+                <input id="fEmail" name="Email" type="email" placeholder="jane@email.com"
+                       autocomplete="email" inputmode="email" required />
               </div>
               <div class="form-group">
                 <label for="fPhone">Phone Number</label>
-                <input id="fPhone" name="Phone" type="tel" placeholder="04XX XXX XXX" />
+                <input id="fPhone" name="Phone" type="tel" placeholder="04XX XXX XXX"
+                       autocomplete="tel" inputmode="tel" />
               </div>
             </div>
             <div class="form-row">
@@ -1555,10 +1673,10 @@
             <!-- Spam honeypot: hidden from people, filled in by bots -->
             <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" />
 
-            <p class="form-error" id="formError" hidden></p>
+            <p class="form-error" id="formError" role="alert" hidden></p>
             <button class="form-submit" id="formSubmit" type="submit">Send Enquiry</button>
           </form>
-          <div class="form-success" id="formSuccess">
+          <div class="form-success" id="formSuccess" role="status" tabindex="-1">
             <div class="tick">&#10003;</div>
             <h4>Enquiry received</h4>
             <p>Thank you for reaching out. I'll be in contact within 3 business days.</p>
@@ -1593,6 +1711,7 @@
         <li><a href="#lantite">LANTITE</a></li>
         <li><a href="#samples">Samples</a></li>
         <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#timetable">Timetable</a></li>
         <li><a href="#enrol">Enrol</a></li>
       </ul>
     </div>
@@ -1600,6 +1719,55 @@
   </footer>
 
   <script>
+    /* ══════════════════════════════════════════════════════════════
+       GOOGLE CALENDAR TIMETABLE
+       Paste your PUBLIC calendar's ID between the quotes below.
+       Google Calendar → the calendar → Settings → "Integrate calendar"
+       → copy "Calendar ID". Leave it empty to show the placeholder.
+       ══════════════════════════════════════════════════════════════ */
+    const CALENDAR_ID = 'locustuition.nsw@gmail.com';
+    const CALENDAR_TZ = 'Australia/Sydney';
+
+    (function initTimetable() {
+      const frame  = document.getElementById('ttFrame');
+      const toggle = document.querySelector('.tt-toggle');
+      if (!frame || !toggle) return;
+
+      if (!CALENDAR_ID) { toggle.style.display = 'none'; return; }
+
+      const srcFor = mode =>
+        'https://calendar.google.com/calendar/embed'
+        + '?src='   + encodeURIComponent(CALENDAR_ID)
+        + '&ctz='   + encodeURIComponent(CALENDAR_TZ)
+        + '&mode='  + mode
+        + '&wkst=2&hl=en_AU'
+        + '&showTitle=0&showPrint=0&showTabs=0&showCalendars=0&showTz=0'
+        + '&showNav=1&showDate=1&bgcolor=%23ffffff';
+
+      const iframe = document.createElement('iframe');
+      iframe.loading = 'lazy';
+      iframe.title = 'Locus Tuition class timetable';
+      iframe.setAttribute('frameborder', '0');
+      iframe.setAttribute('scrolling', 'no');
+
+      // A week grid is unreadable on a phone - start those on the list view.
+      const startMode = window.matchMedia('(max-width: 768px)').matches ? 'AGENDA' : 'WEEK';
+      iframe.src = srcFor(startMode);
+      frame.innerHTML = '';
+      frame.appendChild(iframe);
+
+      toggle.querySelectorAll('button').forEach(btn => {
+        btn.setAttribute('aria-pressed', String(btn.dataset.mode === startMode));
+        btn.addEventListener('click', () => {
+          if (btn.getAttribute('aria-pressed') === 'true') return;
+          toggle.querySelectorAll('button').forEach(b =>
+            b.setAttribute('aria-pressed', String(b === btn))
+          );
+          iframe.src = srcFor(btn.dataset.mode);
+        });
+      });
+    })();
+
     // Hamburger
     const hamburger = document.getElementById('hamburger');
     const navLinks  = document.getElementById('navLinks');
@@ -1741,6 +1909,7 @@
       const btn     = document.getElementById('formSubmit');
       const errBox  = document.getElementById('formError');
       const success = document.getElementById('formSuccess');
+      const intro   = document.getElementById('formIntro');
       if (!form) return;
 
       const FALLBACK = 'Please email locustuition.nsw@gmail.com and I\u2019ll get ' +
@@ -1782,7 +1951,12 @@
           const out = await res.json();
           if (!res.ok || !out.success) throw new Error(out.message || 'failed');
           form.hidden = true;
+          if (intro) intro.hidden = true;
           success.style.display = 'block';
+          // Move focus to the confirmation - the button the visitor just
+          // pressed is now hidden, so otherwise focus is lost entirely.
+          success.focus({ preventScroll: true });
+          success.scrollIntoView({ behavior: 'smooth', block: 'center' });
         } catch (err) {
           fail('Sorry - that didn\u2019t send. ' + FALLBACK);
         }
