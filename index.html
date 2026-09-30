@@ -421,17 +421,72 @@
       box-shadow: 3px 5px 18px rgba(22,33,58,0.06); overflow: hidden;
     }
     .tt-frame iframe { display: block; width: 100%; height: 680px; border: 0; }
-    .tt-empty { padding: 4.5rem 2.5rem; text-align: center; }
-    .tt-empty .tt-empty-mark {
-      font-family: 'Cormorant Garamond', serif; font-size: 2.6rem;
-      font-weight: 300; color: var(--teal); opacity: 0.4; line-height: 1; margin-bottom: 1rem;
+
+    /* Hand-built weekly grid: a fixed band of hours, no scrolling. */
+    .tt-grid {
+      display: grid;
+      grid-template-columns: 56px repeat(5, 1fr);
+      padding: 0 1.2rem 1.2rem;
     }
-    .tt-empty h3 { font-size: 1.3rem; font-weight: 400; color: var(--navy); margin-bottom: 0.6rem; }
-    .tt-empty p { font-size: 0.86rem; color: var(--stone); line-height: 1.8; max-width: 440px; margin: 0 auto; }
+    .tt-day {
+      grid-row: 1; padding: 1.1rem 0 0.8rem; text-align: center;
+      font-size: 0.66rem; font-weight: 600; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--teal);
+      border-bottom: 1px solid var(--border-mid);
+    }
+    .tt-hour {
+      grid-column: 1; text-align: right; padding-right: 0.7rem;
+      font-size: 0.64rem; color: var(--stone);
+      transform: translateY(-0.45em); white-space: nowrap;
+    }
+    .tt-cell { border-bottom: 1px solid var(--border); border-left: 1px solid var(--border); }
+    .tt-cell.tt-half { border-bottom-color: transparent; }
+    .tt-block {
+      margin: 1px 3px; padding: 0.55rem 0.6rem; overflow: hidden;
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; gap: 0.15rem;
+    }
+    .tt-block.tt-class { background: var(--teal-light); border-left: 3px solid var(--teal); }
+    .tt-block.tt-open  { background: var(--gold-light); border-left: 3px solid var(--gold); }
+    .tt-name {
+      font-size: 0.76rem; font-weight: 500; color: var(--navy); line-height: 1.25;
+    }
+    .tt-sub  { font-size: 0.66rem; color: var(--teal); line-height: 1.3; }
+    .tt-meta { font-size: 0.64rem; color: var(--stone); line-height: 1.3; }
+    .tt-spots {
+      align-self: flex-start; margin-top: 0.15rem;
+      font-size: 0.58rem; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 0.18rem 0.42rem; border: 1px solid;
+    }
+    .tt-spots.has  { color: var(--teal);  border-color: rgba(14,110,102,0.4); background: rgba(255,255,255,0.6); }
+    .tt-spots.full { color: var(--stone); border-color: var(--border-mid); }
+
+    /* Narrow screens get the same information as a day-by-day list. */
+    .tt-list { display: none; padding: 0.6rem 1.4rem 1.4rem; }
+    .tt-list-day {
+      display: grid; grid-template-columns: 48px 1fr; gap: 1rem;
+      padding: 1.1rem 0; border-bottom: 1px solid var(--border);
+    }
+    .tt-list-day:last-child { border-bottom: none; }
+    .tt-list-name {
+      font-size: 0.66rem; font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--teal); padding-top: 0.2rem;
+    }
+    .tt-list-item + .tt-list-item {
+      margin-top: 0.9rem; padding-top: 0.9rem; border-top: 1px solid var(--border);
+    }
+    .tt-list-item .tt-name { font-size: 0.92rem; margin-bottom: 0.1rem; }
+    .tt-list-item .tt-sub, .tt-list-item .tt-meta { display: block; font-size: 0.76rem; }
+    .tt-list-item .tt-spots { display: inline-block; margin-top: 0.45rem; }
     .tt-note {
       margin-top: 2.2rem; display: flex; gap: 2.5rem; flex-wrap: wrap; align-items: baseline;
     }
     .tt-note p { font-size: 0.82rem; color: var(--stone); line-height: 1.8; max-width: 620px; }
+    @media (max-width: 860px) {
+      .tt-grid { display: none; }
+      .tt-list { display: block; }
+    }
+
     @media (max-width: 768px) {
       .tt-frame iframe { height: 540px; }
       .tt-toggle button { padding: 0.55rem 1rem; }
@@ -1350,30 +1405,26 @@
 
       <div class="tt-bar reveal">
         <p class="section-intro">
-          Current class blocks and the spots still open, straight from my calendar -
-          so what you see here is always up to date.
+          The regular weekly schedule at a glance - and the live calendar underneath it
+          for exactly what's running each week.
         </p>
-        <div class="tt-toggle" role="group" aria-label="Calendar view">
-          <button type="button" data-mode="WEEK" aria-pressed="true">Week</button>
-          <button type="button" data-mode="AGENDA" aria-pressed="false">List</button>
+        <div class="tt-toggle" role="group" aria-label="Timetable view">
+          <button type="button" data-view="grid" aria-pressed="true">Weekly</button>
+          <button type="button" data-view="live" aria-pressed="false">Live calendar</button>
         </div>
       </div>
 
-      <div class="tt-frame reveal" id="ttFrame">
-        <div class="tt-empty" id="ttEmpty">
-          <div class="tt-empty-mark">&#9675;</div>
-          <h3>Timetable coming shortly</h3>
-          <p>
-            The live class calendar is being set up. In the meantime, send an enquiry
-            and I'll let you know exactly what's running and where there's room.
-          </p>
-        </div>
+      <div class="tt-frame reveal">
+        <div id="ttGrid"></div>
+        <div id="ttLive" hidden></div>
       </div>
 
       <div class="tt-note reveal">
         <p>
-          Class blocks run during NSW school terms. Private one-to-one sessions are
-          arranged individually and aren't shown here - ask and I'll find a time.
+          The weekly view is the regular term schedule; the live calendar shows exact
+          dates, holidays and one-off changes. Open blocks are available for private
+          one-to-one sessions or a new group, and weekend classes run subject to
+          demand - ask and I'll find a time.
         </p>
         <a href="#enrol" class="btn-primary">Ask About a Spot</a>
       </div>
@@ -1727,43 +1778,154 @@
        ══════════════════════════════════════════════════════════════ */
     const CALENDAR_ID = 'locustuition.nsw@gmail.com';
     const CALENDAR_TZ = 'Australia/Sydney';
+    const CALENDAR_COLOUR = '#0E6E66';   // site teal
+
+    /* ══════════════════════════════════════════════════════════════
+       WEEKLY CLASS GRID
+       The regular term schedule, drawn by the page so the whole week
+       is visible at once with no scrolling.
+
+       To change the timetable, edit TT_CLASSES below:
+         day     0 = Monday ... 4 = Friday
+         from/to 24-hour "HH:MM"
+         year    the cohort the class is for
+         content the level being taught
+         spots   places still open (0 shows as "Full")
+         open:true  marks a free block rather than a class
+       TT_HOURS sets the band of hours the grid covers.
+       ══════════════════════════════════════════════════════════════ */
+    const TT_HOURS   = [15, 20];                          // 3pm to 8pm
+    const TT_DAYS    = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+    const TT_CLASSES = [
+      { day: 0, from: '16:30', to: '19:30', year: 'Year 10',
+        content: 'Year 11 Advanced content', spots: 0 },
+      { day: 1, from: '16:30', to: '18:30', year: 'Year 7',
+        content: 'Year 8/9 Acceleration content', spots: 4 },
+      { day: 2, from: '16:30', to: '19:30', year: 'Year 11 Extension 1',
+        content: 'Year 12 Extension 1 content', spots: 0 },
+      { day: 3, from: '15:00', to: '18:00', open: true },
+      { day: 4, from: '15:00', to: '17:00', open: true },
+      { day: 4, from: '17:00', to: '18:00', year: 'Year 3',
+        content: 'Year 4 content + OC Prep', spots: 3 },
+      { day: 4, from: '18:00', to: '20:00', open: true }
+    ];
+
+    (function buildWeeklyGrid() {
+      const host = document.getElementById('ttGrid');
+      if (!host) return;
+
+      const mins  = t => (+t.slice(0, 2)) * 60 + (+t.slice(3));
+      const label = t => {
+        const h = +t.slice(0, 2), m = t.slice(3);
+        const h12 = h % 12 === 0 ? 12 : h % 12;
+        return h12 + (m === '00' ? '' : ':' + m) + (h < 12 ? 'am' : 'pm');
+      };
+      const span = c => label(c.from) + ' - ' + label(c.to);
+      const rowOf = t => (mins(t) - TT_HOURS[0] * 60) / 30 + 2;   // +1 header row
+      const slots = (TT_HOURS[1] - TT_HOURS[0]) * 2;
+
+      // The inside of a block, shared by the grid and the mobile list.
+      function body(c) {
+        if (c.open) {
+          return '<span class="tt-name">Available</span>' +
+                 '<span class="tt-meta">' + span(c) + '</span>';
+        }
+        return '<span class="tt-name">' + c.year + '</span>' +
+               '<span class="tt-sub">' + c.content + '</span>' +
+               '<span class="tt-meta">Group class &middot; ' + span(c) + '</span>' +
+               (c.spots > 0
+                 ? '<span class="tt-spots has">' + c.spots + ' spot' +
+                   (c.spots === 1 ? '' : 's') + ' left</span>'
+                 : '<span class="tt-spots full">Full</span>');
+      }
+
+      let html = '<div class="tt-grid" style="grid-template-rows:auto repeat(' +
+                 slots + ',48px)">';
+      html += '<div class="tt-day" style="border-bottom:none"></div>';
+      TT_DAYS.forEach(d => { html += '<div class="tt-day">' + d + '</div>'; });
+
+      for (let i = 0; i < slots; i++) {
+        const h = TT_HOURS[0] + Math.floor(i / 2);
+        const onHour = i % 2 === 0;
+        if (onHour) {
+          html += '<div class="tt-hour" style="grid-row:' + (i + 2) + '">' +
+                  label(String(h).padStart(2, '0') + ':00') + '</div>';
+        }
+        for (let d = 0; d < TT_DAYS.length; d++) {
+          html += '<div class="tt-cell' + (onHour ? ' tt-half' : '') +
+                  '" style="grid-column:' + (d + 2) + ';grid-row:' + (i + 2) + '"></div>';
+        }
+      }
+      // Closing label, so the band reads as ending rather than just stopping.
+      html += '<div class="tt-hour" style="grid-row:' + (slots + 2) + '">' +
+              label(String(TT_HOURS[1]).padStart(2, '0') + ':00') + '</div>';
+
+      TT_CLASSES.forEach(c => {
+        html += '<div class="tt-block ' + (c.open ? 'tt-open' : 'tt-class') +
+                '" style="grid-column:' + (c.day + 2) + ';grid-row:' +
+                rowOf(c.from) + '/' + rowOf(c.to) + '">' + body(c) + '</div>';
+      });
+      html += '</div>';
+
+      html += '<div class="tt-list">';
+      TT_DAYS.forEach((d, i) => {
+        const items = TT_CLASSES.filter(c => c.day === i);
+        html += '<div class="tt-list-day"><div class="tt-list-name">' + d +
+                '</div><div>' +
+                items.map(c => '<div class="tt-list-item">' + body(c) + '</div>').join('') +
+                '</div></div>';
+      });
+      html += '</div>';
+
+      host.innerHTML = html;
+    })();
 
     (function initTimetable() {
-      const frame  = document.getElementById('ttFrame');
+      const live   = document.getElementById('ttLive');
+      const grid   = document.getElementById('ttGrid');
       const toggle = document.querySelector('.tt-toggle');
-      if (!frame || !toggle) return;
+      if (!live || !toggle) return;
 
       if (!CALENDAR_ID) { toggle.style.display = 'none'; return; }
 
       const srcFor = mode =>
         'https://calendar.google.com/calendar/embed'
         + '?src='   + encodeURIComponent(CALENDAR_ID)
+        // Event colour. The colour picked in Google Calendar's sidebar is only a
+        // personal view setting - the public embed ignores it, so it is set here.
+        + '&color=' + encodeURIComponent(CALENDAR_COLOUR)
         + '&ctz='   + encodeURIComponent(CALENDAR_TZ)
         + '&mode='  + mode
         + '&wkst=2&hl=en_AU'
         + '&showTitle=0&showPrint=0&showTabs=0&showCalendars=0&showTz=0'
         + '&showNav=1&showDate=1&bgcolor=%23ffffff';
 
-      const iframe = document.createElement('iframe');
-      iframe.loading = 'lazy';
-      iframe.title = 'Locus Tuition class timetable';
-      iframe.setAttribute('frameborder', '0');
-      iframe.setAttribute('scrolling', 'no');
+      let iframe = null;
 
-      // A week grid is unreadable on a phone - start those on the list view.
-      const startMode = window.matchMedia('(max-width: 768px)').matches ? 'AGENDA' : 'WEEK';
-      iframe.src = srcFor(startMode);
-      frame.innerHTML = '';
-      frame.appendChild(iframe);
+      // The Google embed is only loaded when someone actually asks for it,
+      // so the page costs nothing until then.
+      function loadLive() {
+        if (iframe) return;
+        iframe = document.createElement('iframe');
+        iframe.title = 'Locus Tuition live class calendar';
+        iframe.setAttribute('frameborder', '0');
+        // A week grid is unreadable on a phone - those get the agenda list.
+        iframe.src = srcFor(
+          window.matchMedia('(max-width: 768px)').matches ? 'AGENDA' : 'WEEK'
+        );
+        live.appendChild(iframe);
+      }
 
       toggle.querySelectorAll('button').forEach(btn => {
-        btn.setAttribute('aria-pressed', String(btn.dataset.mode === startMode));
         btn.addEventListener('click', () => {
           if (btn.getAttribute('aria-pressed') === 'true') return;
           toggle.querySelectorAll('button').forEach(b =>
             b.setAttribute('aria-pressed', String(b === btn))
           );
-          iframe.src = srcFor(btn.dataset.mode);
+          const showLive = btn.dataset.view === 'live';
+          if (showLive) loadLive();
+          live.hidden = !showLive;
+          grid.hidden = showLive;
         });
       });
     })();
